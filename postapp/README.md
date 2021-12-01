@@ -86,3 +86,6 @@ Some next steps:
 
 Pro tip:
 Try "amplify add api" to create a backend API and then "amplify publish" to deploy everything
+
+## Ampliy create api
+amplify add api
