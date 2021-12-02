@@ -89,3 +89,9 @@ Try "amplify add api" to create a backend API and then "amplify publish" to depl
 
 ## Ampliy create api
 amplify add api
+
+## Amplify add auth
+amplify add auth
+
+amplify push
+
