@@ -95,3 +95,8 @@ amplify add auth
 
 amplify push
 
+amplify react The runtime parameter of nodejs10.x is no longer supported for creating or updating AWS Lambda functions. We recommend you use the new runtime (nodejs14.x
+```
+npm install -g @aws-amplify/cli
+```
+
