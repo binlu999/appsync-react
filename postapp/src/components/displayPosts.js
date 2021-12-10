@@ -3,7 +3,9 @@ import { listPosts } from "../graphql/queries";
 import { API, graphqlOperation } from 'aws-amplify';
 import DeletePost from "./deletePost";
 import EditPost from "./editPost";
-import {onCreatePost, onDeletePost} from '../graphql/subscriptions'
+import {onCreateComment, onCreatePost, onDeletePost, onUpdatePost} from '../graphql/subscriptions'
+import CreateComponentPost from "./createCommentPost";
+import CommentPost from "./commentPost";
 
 class DisplayPosts extends Component{
     state={
@@ -28,12 +30,47 @@ class DisplayPosts extends Component{
                 const updatePosts=this.state.posts.filter(post=>post.id!==deletedPost.id);
                 this.setState({posts:updatePosts});
             }
-        })
+        });
+        this.updatePostListener=API.graphql(graphqlOperation(onUpdatePost))
+        .subscribe({
+            next: postData => {
+                const updated = postData.value.data.onUpdatePost;
+                const {posts}=this.state;
+                const index=posts.findIndex(post => post.id === updated.id);
+                const updatedPosts=[
+                    ...posts.slice(0,index),
+                    updated,
+                    ...posts.slice(index+1)
+                ]
+                this.setState({posts:updatedPosts});
+
+            }
+
+        });
+
+        this.commentPostCreateListener = API.graphql(graphqlOperation(onCreateComment))
+        .subscribe({
+            next: commentData => {
+                const createdComment=commentData.value.data.onCreateComment;
+                let posts=[...this.state.posts];
+                for(let post of posts){
+                    if(createdComment.post.id === post.id){
+                        post.comments.items.push(createdComment);
+                    }
+                }
+                this.setState({posts});
+
+            }
+        });
     }
 
     componentWillUnmount = async ()=>{
         this.createPostListener.unsubscribe();
         this.deletePostListener.unsubscribe();
+        this.updatePostListener.unsubscribe();
+
+        this.commentPostCreateListener.unsubscribe();
+
     }
 
     getPosts = async ()=>{
@@ -59,6 +96,19 @@ class DisplayPosts extends Component{
                 <p>{post.postBody}</p>
                 <span style={{display:"inline"}}>
                     <DeletePost data={post} /><EditPost {...post} />
+                </span>
+                <span>
+                    <CreateComponentPost postId={post.id} />
+                    {post.comments.items.length > 0 && 
+                    <span style={{fontSize:"19px",color:"gray"}}>
+                        Comments:
+                    </span>
+                    }
+                    {
+                        post.comments.items.map((comment,index) => 
+                            <CommentPost key={index} commentData={comment}/>
+                        )
+                    }
                 </span>
                 </div>
                 

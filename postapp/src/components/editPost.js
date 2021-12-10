@@ -36,8 +36,7 @@ class EditPost extends Component{
     }
 
     handleTitle = event =>{
-        console.log("title changed");
-
+        
         this.setState({
             postData: {...this.state.postData, postTitle: event.target.value}
         });

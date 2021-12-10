@@ -100,3 +100,6 @@ amplify react The runtime parameter of nodejs10.x is no longer supported for cre
 npm install -g @aws-amplify/cli
 ```
 
+Resources:
+
+About AWS AppSync Subscription: https://docs.aws.amazon.com/en_pv/appsync/latest/devguide/real-time-data.html
